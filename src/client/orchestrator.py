@@ -12,34 +12,33 @@ from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AI
 # import tools from mcp
 import asyncio, json, time
 from servers.tools import system_message
-# from langchain_mcp_adapters.client import MultiServerMCPClient
-# from langchain_mcp_adapters.tools import load_mcp_tools
+from langchain_mcp_adapters.client import MultiServerMCPClient
+from langchain_mcp_adapters.tools import load_mcp_tools
 
 memory = {}
 
 # use client to fetch tools
-# async def get_tools_prompt():
-#     print("🛠️fetching tools and prompt...")
-#     client = MultiServerMCPClient(
-#         {
-#             "Personal Assistant": {
-#                 "command": "python",
-#                 "args": ["src/servers/personal_assistant.py"],
-#                 "transport": "stdio",
-#             }
-#     },
-#     )
-#     tools = await client.get_tools()
-#     prompt = await client.get_prompt("Personal Assistant", "system message")
-#     print("fetching tools and prompt success")
-#     return tools, prompt
+async def get_tools():
+    print("🛠️fetching tools and prompt...")
+    client = MultiServerMCPClient(
+        {
+            "Jacob Hackathon": {
+                "command": "python",
+                "args": ["src/servers/hackathon_jacob.py"],
+                "transport": "stdio",
+            }
+    },
+    )
+    tools = await client.get_tools()
+    print("fetching tools success")
+    return tools
 
 model_name = "gpt-4o-mini"
 
 # create langgraph agent
 async def create_agent(model_name = "gpt-4o-mini"):
-    # tools, prompt = await get_tools_prompt()
-    llm = ChatOpenAI(model=model_name, temperature = 1.2)#.bind_tools(tools)
+    tools = await get_tools()
+    llm = ChatOpenAI(model=model_name, temperature = 1.2).bind_tools(tools)
 
     # create the llm node
     def call_model(state:MessagesState):
@@ -52,13 +51,13 @@ async def create_agent(model_name = "gpt-4o-mini"):
     # Create react agent
     builder = StateGraph(MessagesState)
     builder.add_node(call_model)
-    # builder.add_node(ToolNode(tools))
+    builder.add_node(ToolNode(tools))
     builder.add_edge(START, "call_model")
-    # builder.add_conditional_edges(
-    #     "call_model",
-    #     tools_condition,
-    # )
-    # builder.add_edge("tools", "call_model")
+    builder.add_conditional_edges(
+        "call_model",
+        tools_condition,
+    )
+    builder.add_edge("tools", "call_model")
     graph = builder.compile()
     return graph
 

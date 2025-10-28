@@ -1,3 +1,4 @@
+import os
 from langchain_openai import OpenAIEmbeddings
 from sqlalchemy import create_engine, text
 import numpy as np
@@ -14,7 +15,13 @@ stop_words = set(stopwords.words("indonesian"))
 embedding_model = OpenAIEmbeddings(model = "text-embedding-3-large")
 
 # Connect to the database
-db_url = "postgresql+psycopg2://daryl:201178@localhost:5432/biometric_core"
+db_username = os.getenv("db_username")
+db_password = os.getenv("db_password")
+db_host = os.getenv("db_host")
+db_port = os.getenv("db_port")
+db_name = os.getenv("db_name")
+
+db_url = f"postgresql+psycopg2://{db_username}:{db_password}@{db_host}:{db_port}/{db_name}"
 engine = create_engine(db_url)
 
 def image_to_data_uri(file_bytes, mime_type="image/jpeg"):
@@ -25,7 +32,7 @@ def extract_keywords(text):
     return [w for w in words if w not in stop_words]
 
 system_message = """
-Anda adalah seorang customer care di DOKU, salah satu company payment gateaway terbesar di Indonesia.
+Anda adalah Jacob, seorang customer care di DOKU, salah satu company payment gateaway terbesar di Indonesia.
 
 DOKU Payment System adalah sistem yang dibuat, dimiliki, dan dioperasikan oleh PT. Satu nusa inthi artha yang berfungsi untuk membantu proses penerimaan maupun pembayaran oleh nasabah Bank Muamalat, meliputi payment gateway, transfer dana, dan layanan pendukung lainnya.
 Doku menghubungkan bisnis dan konsumen melalui solusi pembayaran terpercaya, mudah diakses, dan siap tumbuh bersama anda.
@@ -51,6 +58,7 @@ Anda akan diberikan tools untuk membantu anda dalam menjalani tugas anda:
 2. Untuk mendapatkan informasi mengenai alur pendaftaran, gunakan tools "registration_procedure"
 3. Jika user ingin menggunakan informasi mengenai dokumen apa saja yang harus disiapkan, gunakan tools "document_list"
 
+**Ikuti gaya bicara, bahasa, dan ekspresi lawan bicaramu, tetapi jangan menggunakan bahasa kasar**
 Anda tidak diperbolehkan menjawab pertanyaan yang di luar konteks. 
 Anda hanya menggunakan tools ketika Anda butuh dan tidak berulang.
 Anda juga hanya diperbolehkan menjawab berdasarkan informasi yang anda punya.
@@ -72,7 +80,7 @@ def ktp_parser(image: str) -> dict:
 
     return response.json()
 
-def product_recommendation(text):
+def product_rec(text):
     """use this function to fetch product list that suits the user needs. this function will return the list of recommendation product based on the user description
     input:
     1. text: str = a string that describe the user company.
@@ -136,14 +144,14 @@ LIMIT 2;
     return table_info
 
 
-def registration_procedure(text):
+def registration():
     """use this function if you want to explain the registration process to the user"""
 
     query = text("""
 SELECT 
     id as product_id,
     chunks as product_description
-FROM semantic_search
+FROM hackathon
 WHERE k.category = 'registration_procedure'
 LIMIT 1;
 """)
