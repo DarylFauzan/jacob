@@ -10,11 +10,10 @@ from client.orchestrator import orchestrator
 from servers.tools import image_to_data_uri
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-print(TELEGRAM_TOKEN)
 
 # define the bot message when the user start the bot
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("""Assalamualaikum Akhi""")
+    await update.message.reply_text("""Hai, aku Jacob! Asisten dari DOKU. Sekarang DOKU sudah menangani lebih dari 500,000,000 transaksi! Kamu mau kenal DOKU lebih dekat? Atau langsung join aja! Aku bakal bantu kamu di setiap langkahnya.""")
 
 # text chat handler
 async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
