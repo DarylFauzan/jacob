@@ -24,8 +24,8 @@ db_name = os.getenv("db_name")
 db_url = f"postgresql+psycopg2://{db_username}:{db_password}@{db_host}:{db_port}/{db_name}"
 engine = create_engine(db_url)
 
-def image_to_data_uri(file_bytes, mime_type="image/jpeg"):
-    return f"data:{mime_type};base64,{base64.b64encode(file_bytes).decode()}"
+def image_to_base64(file_bytes, mime_type="image/jpeg"):
+    return base64.b64encode(file_bytes).decode()
 
 def extract_keywords(text):
     words = re.findall(r'\w+', text.lower())
@@ -81,10 +81,10 @@ def ktp_parser(image: str) -> dict:
 
     return response.json()
 
-def product_rec(text):
+def product_rec(description):
     """use this function to fetch product list that suits the user needs. this function will return the list of recommendation product based on the user description
     input:
-    1. text: str = a string that describe the user company.
+    1. description: str = a string that describe the user company.
     
     output:
     output format will be in dictionary where the key is 
@@ -93,13 +93,13 @@ def product_rec(text):
     3. relevant_score: measure the relevancy of the product with the user description. the score is [0, 1] where 1 is the most relevant product"""
 
     # set up semantic search
-    embd = embedding_model.embed_query(text)
+    embd = embedding_model.embed_query(description)
     norm_embd = np.array(embd) / np.linalg.norm(embd) # unit vector
     print(norm_embd.shape)
     norm_embd = norm_embd.flatten().tolist()
     # set up keyword search
     
-    list_keywords = extract_keywords(text)
+    list_keywords = extract_keywords(description)
     keywords_logic = ""
 
     for w in list_keywords:
@@ -136,7 +136,7 @@ FROM semantic_search AS s
 JOIN keyword_search AS k
     ON s.id = k.id
 WHERE k.category = 'product'
-ORDER BY final_score DESC
+ORDER BY relevant_score DESC
 LIMIT 2;
     """)
 

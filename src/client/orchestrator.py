@@ -66,23 +66,20 @@ print("Agent has been initialized")
 
 # build the orchestrator
 async def orchestrator(user_id, question, model_name="gpt-4o-mini"):
-    graph = await create_agent()
-
     start_time = time.time()
-    full_response = ""
 
     # initialize memory for user
     if user_id not in memory:
-        memory[user_id] = [HumanMessage(question)]
+        memory[user_id] = [HumanMessage(content = question)]
     else:
-        memory[user_id].append(HumanMessage(question))
+        memory[user_id].append(HumanMessage(content = question))
 
     # invoke the agent
     response = await graph.ainvoke({"messages": memory[user_id]})
     memory[user_id] = response["messages"]
-    print(memory[user_id])
 
-    answer = re.sub(r'<think>.*?</think>\n*', '', response["messages"][-1].content, flags=re.DOTALL)
+    answer = response["messages"][-1].content
+    log = {'response': answer, 'token': response["messages"][-1].response_metadata, "duration": time.time() - start_time}
+    print(f"{log}")
 
-    # optionally yield a final "done" event
     return answer

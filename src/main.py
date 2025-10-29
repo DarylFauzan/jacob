@@ -7,7 +7,7 @@ from telegram import Update
 from telegram.ext import Application, MessageHandler, filters, ContextTypes, CommandHandler
 
 from client.orchestrator import orchestrator
-from servers.tools import image_to_data_uri
+from servers.tools import image_to_base64
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 
@@ -36,16 +36,24 @@ async def handle_image(update: Update, context: ContextTypes.DEFAULT_TYPE):
     file = await photo.get_file()
     file_bytes = requests.get(file.file_path).content
 
-    image_data_uri = image_to_data_uri(file_bytes)
+    image_data_base64 = image_to_base64(file_bytes)
     user_question = update.message.caption or ""
 
     message = [
         {"type": "text", "text": user_question},
-        {"type": "image_url", "image_url": image_data_uri},
+        {
+            "type": "image",
+            "source_type": "base64",
+            "data": image_data_base64,
+            "mime_type": "image/jpeg",
+        },
     ]
 
-    response = await orchestrator(user_id, message, model_name="gpt-4o-mini")
-    await update.message.reply_text(response.content)    
+    try:
+        response = await orchestrator(user_id, message, model_name="gpt-4o-mini")
+        await update.message.reply_text(response)
+    except:    
+        await update.message.reply_text("Maaf untuk saat ini kami belum support fitur gambar. tolong ketik pesan Anda")
 
 # voice not chat handler
 async def voice_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -86,5 +94,6 @@ if __name__ == "__main__":
     app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.TEXT, chat))
     app.add_handler(MessageHandler(filters.VOICE, voice_chat))
+    app.add_handler(MessageHandler(filters.PHOTO, handle_image))
     app.run_polling()
     print("chatbot successfully initialized")
