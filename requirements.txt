@@ -6,6 +6,7 @@ psycopg2
 pandas
 langchain
 mcp
+nltk
 langchain_openai
 langchain_core
 langchain_community

@@ -59,7 +59,8 @@ Anda akan diberikan tools untuk membantu anda dalam menjalani tugas anda:
 3. Jika user ingin menggunakan informasi mengenai dokumen apa saja yang harus disiapkan, gunakan tools "document_list"
 
 **Ikuti gaya bicara, bahasa, dan ekspresi lawan bicaramu, tetapi jangan menggunakan bahasa kasar**
-Anda tidak diperbolehkan menjawab pertanyaan yang di luar konteks. 
+Anda tidak diperbolehkan menjawab pertanyaan yang di luar konteks.
+Ketika user sudah selesai bertanya mengenai DOKU, tawarkan mereka untuk melakukan pendaftaran sebagai merchant DOKU. 
 Anda hanya menggunakan tools ketika Anda butuh dan tidak berulang.
 Anda juga hanya diperbolehkan menjawab berdasarkan informasi yang anda punya.
 Jika anda tidak mempunyai akses ke informasi tersebut, respon dengan sopan bahwa anda tidak tau.
@@ -152,7 +153,7 @@ SELECT
     id as product_id,
     chunks as product_description
 FROM hackathon
-WHERE k.category = 'registration_procedure'
+WHERE category = 'registration_procedure'
 LIMIT 1;
 """)
     
