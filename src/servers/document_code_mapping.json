@@ -1,0 +1,173 @@
+{"business_line":
+  {
+    "CAPITAL_MARKET": [
+      "LISENSI_BAPPEBTI"
+    ],
+    "CAPITAL_MARKET_INTERNATIONAL": [
+      "LICENSE_IFSC",
+      "LICENSE_CFTC",
+      "LICENSE_ASIC",
+      "LICENSE_CYSEC",
+      "LICENSE_FCA"
+    ],
+    "CHARITY": [
+      "IZIN_PUB"
+    ],
+    "EDUCATION": [
+      "IZIN_DISPENDIK_KEMENDIKBUD"
+    ],
+    "EVENT_ORGANIZER": [
+      "IZIN_KERAMAIAN",
+      "IZIN_BOPI"
+    ],
+    "FOOD_AND_BEVERAGE": [
+      "IZIN_PMB",
+      "SERTIFIKAT_HALAL_MUI",
+      "BPOM"
+    ],
+    "P2P_LENDING": [
+      "TANDA_DAFTAR_PSE",
+      "LISENSI_OJK"
+    ],
+    "PHARMACY": [
+      "IZIN_EDAR_ALAT_KESEHATAN",
+      "BPOM"
+    ],
+    "RETAIL": [
+      "IZIN_DISTRIBUTOR_RESMI"
+    ],
+    "RETAIL_INTERNATIONAL": [
+      "IZIN_DISTRIBUTOR_RESMI"
+    ],
+    "CRYPTO": [
+      "LISENSI_BAPPEBTI"
+    ],
+    "CRYPTO_INTERNATIONAL": [
+      "LICENSE_IFSC",
+      "LICENSE_CFTC",
+      "LICENSE_ASIC",
+      "LICENSE_CYSEC",
+      "LICENSE_FCA"
+    ],
+    "OTA": [
+      "SERTIFIKAT_KEANGGOTAAN_ASITA",
+      "IZIN_PENYELENGGARAAN_IBADAH_HAJI_DAN_UMRAH"
+    ],
+    "TRAVEL_AGENT": [
+      "SERTIFIKAT_KEANGGOTAAN_ASITA",
+      "IZIN_PENYELENGGARAAN_IBADAH_HAJI_DAN_UMRAH"
+    ]
+    },
+    "legal_code":
+    {
+    "BHD": [
+      "COMPANY_REGISTRATION"
+    ],
+    "BLU": [
+      "NPWP_BADAN",
+      "IZIN_BLU"
+    ],
+    "BUMN": [
+      "NPWP_BADAN",
+      "NIB",
+      "SK_KEMENKUMHAM",
+      "AKTA_PENDIRIAN_PERUSAHAAN",
+      "IZIN_USAHA"
+    ],
+    "CORPORATION": [
+      "LICENSE_CFTC",
+      "COMPANY_REGISTRATION"
+    ],
+    "CV": [
+      "AKTA_PENDIRIAN_PERUSAHAAN",
+      "NPWP_BADAN",
+      "SK_KEMENKUMHAM",
+      "NIB",
+      "IZIN_USAHA"
+    ],
+    "FIRMA": [
+      "IZIN_USAHA",
+      "NPWP_BADAN",
+      "SK_KEMENKUMHAM",
+      "NIB",
+      "AKTA_PENDIRIAN_PERUSAHAAN"
+    ],
+    "INC": [
+      "LICENSE_CFTC",
+      "COMPANY_REGISTRATION"
+    ],
+    "KOPERASI": [
+      "NPWP_BADAN",
+      "NIB",
+      "IZIN_KOPERASI_SIMPAN_PINJAM"
+    ],
+    "LLC": [
+      "LICENSE_CFTC",
+      "COMPANY_REGISTRATION"
+    ],
+    "LLP": [
+      "COMPANY_REGISTRATION",
+      "LICENSE_FCA"
+    ],
+    "LTD": [
+      "LICENSE_FCA",
+      "COMPANY_REGISTRATION"
+    ],
+    "OTHER_CORPORATE": [
+      "NPWP_BADAN"
+    ],
+    "OTHER_INTERNATIONAL": [
+      "COMPANY_REGISTRATION"
+    ],
+    "PERKUMPULAN_BERBADAN_HUKUM": [
+      "SK_KEMENKUMHAM",
+      "NPWP_BADAN"
+    ],
+    "PERSEORANGAN": [
+      "NIB_PERSEORANGAN",
+      "IZIN_USAHA_PERSEORANGAN",
+      "NPWP_ORANG_PRIBADI"
+    ],
+    "PLC": [
+      "COMPANY_REGISTRATION",
+      "LICENSE_FCA"
+    ],
+    "PP": [
+      "NPWP_BADAN",
+      "NIB"
+    ],
+    "PT": [
+      "NIB",
+      "NPWP_BADAN",
+      "IZIN_USAHA",
+      "AKTA_PENDIRIAN_PERUSAHAAN",
+      "SK_KEMENKUMHAM"
+    ],
+    "PTE_LTD": [
+      "COMPANY_REGISTRATION"
+    ],
+    "PTN_BH": [
+      "NPWP_BADAN",
+      "SK_KEMENDIKBUDRISTEK"
+    ],
+    "PVT_LTD": [
+      "COMPANY_REGISTRATION"
+    ],
+    "SDN": [
+      "COMPANY_REGISTRATION"
+    ],
+    "SDN_BHD": [
+      "COMPANY_REGISTRATION"
+    ],
+    "UD": [
+      "NIB",
+      "NPWP_BADAN",
+      "IZIN_USAHA"
+    ],
+    "YAYASAN": [
+      "TANDA_DAFTAR_YAYASAN",
+      "SK_PENDIRIAN_YAYASAN",
+      "NPWP_BADAN"
+    ]
+  }
+}

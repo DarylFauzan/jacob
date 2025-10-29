@@ -1,4 +1,4 @@
-import os
+import os, json
 from langchain_openai import OpenAIEmbeddings
 from sqlalchemy import create_engine, text
 import numpy as np
@@ -23,6 +23,9 @@ db_name = os.getenv("db_name")
 
 db_url = f"postgresql+psycopg2://{db_username}:{db_password}@{db_host}:{db_port}/{db_name}"
 engine = create_engine(db_url)
+
+with open("src/servers/document_code_mapping.json", "r") as f:
+    legal_doc = json.load(f)
 
 def image_to_base64(file_bytes, mime_type="image/jpeg"):
     return base64.b64encode(file_bytes).decode()
@@ -81,6 +84,7 @@ def ktp_parser(image: str) -> dict:
     )
 
     return response.json()
+
 
 def product_rec(description):
     """use this function to fetch product list that suits the user needs. this function will return the list of recommendation product based on the user description
@@ -161,3 +165,15 @@ LIMIT 1;
     dfx = pd.read_sql_query(query,con=engine)
     table_info = dfx.to_dict(orient = "records")
     return table_info
+
+
+def document_map(lob, legal_code):
+    assert lob in legal_doc["business_line"].keys(), f"business line not available. available business_line: {legal_doc['business_line'].keys()}"
+    assert legal_code in legal_doc["legal_code"].keys(), f"business line not available. available business_line: {legal_doc['legal_code'].keys()}"
+
+    business_line_doc = legal_doc["business_line"][lob]
+    leg_doc = legal_doc["legal_code"][legal_code]
+
+    final_doc = business_line_doc + leg_doc
+
+    return final_doc

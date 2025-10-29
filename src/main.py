@@ -52,7 +52,8 @@ async def handle_image(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         response = await orchestrator(user_id, message, model_name="gpt-4o-mini")
         await update.message.reply_text(response)
-    except:    
+    except Exception as e:  
+        print(str(e))  
         await update.message.reply_text("Maaf untuk saat ini kami belum support fitur gambar. tolong ketik pesan Anda")
 
 # voice not chat handler
@@ -66,27 +67,35 @@ async def voice_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     file_object = await context.bot.get_file(file_id)
 
-    # Create a temporary file path. Telegram voice notes are OGG/Opus.
-    with tempfile.NamedTemporaryFile(suffix=".ogg", delete=False) as temp_file:
-        temp_path = temp_file.name
+    try:
+        # Create a temporary file path. Telegram voice notes are OGG/Opus.
+        with tempfile.NamedTemporaryFile(suffix=".ogg", delete=False) as temp_file:
+            temp_path = temp_file.name
+            
+            # Download the file
+            await file_object.download_to_drive(custom_path=temp_path)
         
-        # Download the file
-        await file_object.download_to_drive(custom_path=temp_path)
-    
-    # send the message to speech to text model
-    with open(temp_path, 'rb') as f:
-        files = {'file': ('voice.ogg', f, 'audio/ogg')}
-        response = requests.post(
-                EXTERNAL_API_URL, 
-                files=files, 
-                # headers=headers,
-                timeout=30 # Set a timeout for the request
-            )
-        string_message = response.text
+        # send the message to speech to text model
+        with open(temp_path, 'rb') as f:
+            files = {'file': ('voice.ogg', f, 'audio/ogg')}
+            response = requests.post(
+                    "https://jocob-voice-assistant-api-production.up.railway.app/api/speech/transcribe", 
+                    files=files, 
+                )
+            
+            if response.status_code != 200:
+                raise
 
-    response = await orchestrator(user_id, string_message, model_name="gpt-4o-mini")
+            string_message = response.text
+            print(string_message)
 
-    await update.message.reply_text(response)
+        response = await orchestrator(user_id, string_message, model_name="gpt-4o-mini")
+        await update.message.reply_text(response)
+
+    except Exception as e:
+        print(str(e))
+        await update.message.reply_text("Maaf untuk saat ini kami belum support fitur voice note. tolong ketik pesan Anda")
+
 
 if __name__ == "__main__":
     print("initializing bot...")

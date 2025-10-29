@@ -29,5 +29,14 @@ def registration_procedure():
 
     return registration()
 
+@mcp.tool()
+def document_list(lob: str, legal_code: str):
+    f"""use this function if the user ask about what document that they need to submit if they want to join DOKU.
+    input:
+    1. lob: user line of business. The value are {legal_doc["business_line"].keys()}
+    2. legal_code: user legal business code. The value are {legal_doc["legal_code"].keys()}
+    """
+    return document_map(lob, legal_code)
+
 if __name__ == "__main__":
     mcp.run(transport="stdio")
