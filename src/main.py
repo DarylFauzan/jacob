@@ -8,7 +8,7 @@ from telegram import Update
 from telegram.ext import Application, MessageHandler, filters, ContextTypes, CommandHandler
 
 from client.orchestrator import orchestrator
-from servers.tools import image_to_base64
+from servers.tools import image_to_base64, speech2text
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 
@@ -76,29 +76,8 @@ async def voice_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
             # Download the file
             await file_object.download_to_drive(custom_path=temp_ogg_path)
 
-        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_wav:
-            temp_wav_path = temp_wav.name
-            
-            # Load the OGG file using pydub
-            audio = AudioSegment.from_ogg(temp_ogg_path)
-            
-            # Export it to WAV format
-            audio.export(temp_wav_path, format="wav")
-            print(f"File converted from OGG to WAV: {temp_wav_path}")
-        
-        # send the message to speech to text model
-        with open(temp_wav_path, 'rb') as f:
-            files = {'file': ('voice.wav', f, 'audio/wav')}
-            response = requests.post(
-                    "https://jocob-voice-assistant-api-production.up.railway.app/api/speech/transcribe", 
-                    files=files, 
-                )
-            
-            if response.status_code != 200:
-                raise ValueError(f"status_code: {response.status_code}, message: {response.text}")
-
-            string_message = response.text
-            print(string_message)
+        string_message = speech2text(temp_ogg_path)
+        print(f"text two speach retrieve input audio. transcribe_result: {string_message}")
 
         response = await orchestrator(user_id, string_message, model_name="gpt-4o-mini")
         await update.message.reply_text(response)

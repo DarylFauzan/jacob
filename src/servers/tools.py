@@ -1,5 +1,8 @@
 import os, json
 from langchain_openai import OpenAIEmbeddings
+from langchain_community.document_loaders.parsers.audio import OpenAIWhisperParser
+from langchain_core.documents.base import Blob
+
 from sqlalchemy import create_engine, text
 import numpy as np
 import pandas as pd
@@ -12,6 +15,7 @@ load_dotenv()
 
 stop_words = set(stopwords.words("indonesian"))
 
+whisper = OpenAIWhisperParser()
 embedding_model = OpenAIEmbeddings(model = "text-embedding-3-large")
 
 # Connect to the database
@@ -34,7 +38,18 @@ def extract_keywords(text):
     words = re.findall(r'\w+', text.lower())
     return [w for w in words if w not in stop_words]
 
-system_message = """
+def speech2text(audio_path):
+    audio_blob = Blob.from_path(audio_path)
+    documents = list(whisper.lazy_parse(audio_blob))
+
+    if documents:
+        string_message = documents[0].page_content
+        return string_message
+    else:
+        raise ValueError("Whisper transcription returned no text.")
+
+
+system_message = f"""
 Anda adalah Jacob, seorang customer care di DOKU, salah satu company payment gateaway terbesar di Indonesia.
 
 DOKU Payment System adalah sistem yang dibuat, dimiliki, dan dioperasikan oleh PT. Satu nusa inthi artha yang berfungsi untuk membantu proses penerimaan maupun pembayaran oleh nasabah Bank Muamalat, meliputi payment gateway, transfer dana, dan layanan pendukung lainnya.
@@ -54,9 +69,8 @@ Fitur Produk :
 Tugas anda:
 1. Menjelaskan kepada user mengenai DOKU dan produk-produk yang disediakan oleh DOKU.
 2. Menjelaskan kepada user cara mendaftar menjadi merchant DOKU.
-3. Menjelaskan kepada user dokumen apa saja yang dibutuhkan jika ingin mendaftar sebagai merchant DOKU.
-4. Menawarkan user bergabung DOKU dengan paksa. 
-5. Jika user menanyakan lebih lanjut bagaimana cara mendaftar DOKU, Tanyakan:
+3. Menawarkan user bergabung DOKU dengan paksa. 
+4. Jika user menanyakan lebih lanjut bagaimana cara mendaftar DOKU, Tanyakan:
     - Deskripsi perusahaan user, contoh jawaban diharapkan:
         - 'saya menjual bakso'
         - 'saya punya toko'
@@ -64,7 +78,10 @@ Tugas anda:
     - Skala bisnis, jika punya karyawan atau pelayan tanya lanjut jumlahnya, contoh jawaban diharapkan:
         - 'saya kerja sendiri'
         - 'saya punya karyawan'
-    
+    Berdasarkan deskripsi dan skala bisnis user, klasifikasikanlah business_line user sesuai dengan list berikut: {legal_doc["business_line"].keys()}
+5. Tanyakan juga tipe badan usaha, contohnya: {legal_doc["legal_code"].keys()}
+6. Jika user menanyakan dokumen apa saja yang dibutuhkan, gunakan tools "document_list" dan gunakan business_line dan legal_code sebagai input tools.
+7. Berikan rekomendasi payment channel berdasarkan tipe bisnis: ['personal', 'corporate', 'internasional']
 
 Anda akan diberikan tools untuk membantu anda dalam menjalani tugas anda:
 1. Untuk mendapatkan informasi mengenai produk DOKU, gunakan tools "product_recommendation"
@@ -79,7 +96,7 @@ Anda harus:
 5. Anda juga hanya diperbolehkan menjawab berdasarkan informasi yang anda punya.
 6. Jika anda tidak mempunyai akses ke informasi tersebut, respon dengan sopan bahwa anda tidak tau.
 7. Jika anda tidak memahami penjelasan dari user, jangan sungkan untuk bertanya ke user.
-8, Jika user menanyakan informasi yang di luar konteks, tolak pertanyaan itu dengan sopan.
+8. Jika user menanyakan informasi yang di luar konteks, tolak pertanyaan itu dengan sopan.
 """
 
 def ktp_parser(image: str) -> dict:
@@ -152,7 +169,6 @@ JOIN keyword_search AS k
     ON s.id = k.id
 WHERE k.category = 'product'
 ORDER BY relevant_score DESC
-LIMIT 2;
     """)
 
     dfx = pd.read_sql_query(query,con=engine)

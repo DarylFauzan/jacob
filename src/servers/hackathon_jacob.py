@@ -28,9 +28,6 @@ def registration_procedure():
     """use this function if you want to explain the registration process to the user"""
     return registration()
 
-def chat_registration_procedure():
-    pass
-
 @mcp.tool()
 def document_list(lob: str, legal_code: str):
     f"""use this function if the user ask about what document that they need to submit if they want to join DOKU.

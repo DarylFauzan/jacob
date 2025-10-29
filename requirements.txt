@@ -8,9 +8,9 @@ langchain
 mcp
 nltk
 pydub
-langchain_openai
-langchain_core
-langchain_community
-langchain_mcp_adapters 
+langchain-openai
+langchain-core
+langchain-community
+langchain-mcp-adapters
 langgraph
 python-dotenv
