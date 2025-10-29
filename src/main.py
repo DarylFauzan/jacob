@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+from pydub import AudioSegment
 
 load_dotenv()
 
@@ -70,21 +71,31 @@ async def voice_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         # Create a temporary file path. Telegram voice notes are OGG/Opus.
         with tempfile.NamedTemporaryFile(suffix=".ogg", delete=False) as temp_file:
-            temp_path = temp_file.name
+            temp_ogg_path = temp_file.name
             
             # Download the file
-            await file_object.download_to_drive(custom_path=temp_path)
+            await file_object.download_to_drive(custom_path=temp_ogg_path)
+
+        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_wav:
+            temp_wav_path = temp_wav.name
+            
+            # Load the OGG file using pydub
+            audio = AudioSegment.from_ogg(temp_ogg_path)
+            
+            # Export it to WAV format
+            audio.export(temp_wav_path, format="wav")
+            print(f"File converted from OGG to WAV: {temp_wav_path}")
         
         # send the message to speech to text model
-        with open(temp_path, 'rb') as f:
-            files = {'file': ('voice.ogg', f, 'audio/ogg')}
+        with open(temp_wav_path, 'rb') as f:
+            files = {'file': ('voice.wav', f, 'audio/wav')}
             response = requests.post(
                     "https://jocob-voice-assistant-api-production.up.railway.app/api/speech/transcribe", 
                     files=files, 
                 )
             
             if response.status_code != 200:
-                raise
+                raise ValueError(f"status_code: {response.status_code}, message: {response.text}")
 
             string_message = response.text
             print(string_message)

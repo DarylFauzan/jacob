@@ -7,6 +7,7 @@ pandas
 langchain
 mcp
 nltk
+pydub
 langchain_openai
 langchain_core
 langchain_community
