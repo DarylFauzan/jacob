@@ -26,8 +26,10 @@ def product_recommendation(text):
 @mcp.tool()
 def registration_procedure():
     """use this function if you want to explain the registration process to the user"""
-
     return registration()
+
+def chat_registration_procedure():
+    pass
 
 @mcp.tool()
 def document_list(lob: str, legal_code: str):
