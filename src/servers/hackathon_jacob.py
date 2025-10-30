@@ -37,5 +37,14 @@ def document_list(lob: str, legal_code: str):
     """
     return document_map(lob, legal_code)
 
+@mcp.tool()
+def payment_channel_rec(business_type: str):
+    """use this tool to give payment channel recommendation to the user. each business type has its own unique payment channel.
+    input:
+    1. business_type: type of business. There are ['personal', 'corporate', 'internasional'].
+    """
+
+    return pc_map(business_type)
+
 if __name__ == "__main__":
     mcp.run(transport="stdio")

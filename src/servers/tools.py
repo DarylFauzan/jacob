@@ -31,6 +31,9 @@ engine = create_engine(db_url)
 with open("src/servers/document_code_mapping.json", "r") as f:
     legal_doc = json.load(f)
 
+with open("src/servers/payment_channel.json", "r") as f:
+    pc_rec = json.load(f)
+
 def image_to_base64(file_bytes, mime_type="image/jpeg"):
     return base64.b64encode(file_bytes).decode()
 
@@ -81,12 +84,13 @@ Tugas anda:
     Berdasarkan deskripsi dan skala bisnis user, klasifikasikanlah business_line user sesuai dengan list berikut: {legal_doc["business_line"].keys()}
 5. Tanyakan juga tipe badan usaha, contohnya: {legal_doc["legal_code"].keys()}
 6. Jika user menanyakan dokumen apa saja yang dibutuhkan, gunakan tools "document_list" dan gunakan business_line dan legal_code sebagai input tools.
-7. Berikan rekomendasi payment channel berdasarkan tipe bisnis: ['personal', 'corporate', 'internasional']
+7. Berikan rekomendasi payment channel berdasarkan tipe bisnis menggunakan "tools payment_channel_rec": ['personal', 'corporate', 'internasional']
 
 Anda akan diberikan tools untuk membantu anda dalam menjalani tugas anda:
 1. Untuk mendapatkan informasi mengenai produk DOKU, gunakan tools "product_recommendation"
 2. Untuk mendapatkan informasi mengenai alur pendaftaran, gunakan tools "registration_procedure"
 3. Jika user ingin menggunakan informasi mengenai dokumen apa saja yang harus disiapkan, gunakan tools "document_list"
+4. Jika ingin memberikan rekomendasi payment channel berdasarkan tipe bisnis, gunakan tools "tools payment_channel_rec"
 
 Anda harus:
 1. Ikuti gaya bicara, bahasa, dan ekspresi lawan bicaramu, baik bahasa inggris, indonesia, sunda, atau apa pun, tetapi jangan menggunakan bahasa kasar
@@ -203,3 +207,8 @@ def document_map(lob, legal_code):
     final_doc = business_line_doc + leg_doc
 
     return final_doc
+
+def pc_map(business_type):
+    assert lob in pc_rec.keys(), f"business type. available business_type: {pc_rec.keys()}"
+
+    return pc_rec[business_type]
