@@ -209,6 +209,6 @@ def document_map(lob, legal_code):
     return final_doc
 
 def pc_map(business_type):
-    assert lob in pc_rec.keys(), f"business type. available business_type: {pc_rec.keys()}"
+    assert business_type in pc_rec.keys(), f"business type. available business_type: {pc_rec.keys()}"
 
     return pc_rec[business_type]
